@@ -1,1 +1,1 @@
-# docker-frps
+:whale: Dockerfiles for [frps](https://github.com/fatedier/frp) - fast reverse proxy server
