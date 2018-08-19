@@ -21,6 +21,8 @@ RUN set -ex \
     && apk del curl \
     && rm -rf /var/cache/apk
 
+ENV PATH /etc/frps:$PATH
+
 EXPOSE 7000/tcp
 
 CMD ["frps"]
