@@ -23,6 +23,6 @@ RUN set -ex \
 
 ENV PATH /etc/frps:$PATH
 
-EXPOSE 7000/tcp
+EXPOSE 7000
 
 CMD ["frps"]
