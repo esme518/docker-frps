@@ -2,7 +2,7 @@
 # Dockerfile for frps
 #
 
-FROM alpine:3.8
+FROM alpine:latest
 
 ENV FRP_VER 0.32.0
 ENV FRP_URL https://github.com/fatedier/frp/releases/download/v${FRP_VER}/frp_${FRP_VER}_linux_amd64.tar.gz
