@@ -2,13 +2,11 @@
 # Dockerfile for frps
 #
 
-FROM alpine:latest
+FROM alpine as source
 
-ARG FRP_VER="0.45.0"
-ENV FRP_URL=https://github.com/fatedier/frp/releases/download/v${FRP_VER}/frp_${FRP_VER}_
-ENV FRP_DIR=frp_${FRP_VER}_
+ARG URL=https://api.github.com/repos/fatedier/frp/releases/latest
 
-WORKDIR /etc/frps
+WORKDIR /root
 
 RUN set -ex \
     && if [ "$(uname -m)" == aarch64 ]; then \
@@ -16,17 +14,24 @@ RUN set -ex \
        elif [ "$(uname -m)" == x86_64 ]; then \
            export PLATFORM='linux_amd64'; \
        fi \
-    && export FRP_URL=${FRP_URL}${PLATFORM}.tar.gz \
-    && export FRP_DIR=${FRP_DIR}${PLATFORM} \
     && apk add --update --no-cache curl \
-    && curl -sSL $FRP_URL | tar xz \
-    && mv $FRP_DIR/frps /etc/frps/ \
-    && mv $FRP_DIR/frps.ini /etc/frps/ \
-    && rm -rf $FRP_DIR \
-    && rm -rf /tmp/* /var/cache/apk/*
+    && wget -O frp.tar.gz $(curl -s $URL | grep browser_download_url | egrep -o 'http.+\.tar.gz' | grep -i "$PLATFORM") \
+    && tar xvf frp.tar.gz --strip-components 1
 
-ENV PATH /etc/frps:$PATH
+FROM alpine
+COPY --from=source /root/frps /usr/local/bin/frps
+COPY --from=source /root/frps.ini /etc/frps/frps.ini
+
+COPY docker-entrypoint.sh /entrypoint.sh
+
+RUN set -ex \
+    && apk --update add --no-cache \
+       ca-certificates \
+    && rm -rf /var/cache/apk
+
+WORKDIR /frps
 
 EXPOSE 7000
 
-CMD ["frps"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["frps","-c","/frps/frps.ini"]
