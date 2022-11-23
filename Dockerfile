@@ -27,7 +27,7 @@ COPY docker-entrypoint.sh /entrypoint.sh
 RUN set -ex \
     && apk --update add --no-cache \
        ca-certificates \
-    && rm -rf /var/cache/apk
+    && rm -rf /tmp/* /var/cache/apk/*
 
 WORKDIR /frps
 
