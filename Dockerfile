@@ -20,7 +20,7 @@ RUN set -ex \
 
 FROM alpine
 COPY --from=source /root/frps /usr/local/bin/frps
-COPY --from=source /root/frps.ini /etc/frps/frps.ini
+COPY --from=source /root/frps.toml /etc/frps/frps.toml
 
 COPY docker-entrypoint.sh /entrypoint.sh
 
@@ -34,4 +34,4 @@ WORKDIR /frps
 EXPOSE 7000
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["frps","-c","/frps/frps.ini"]
+CMD ["frps","-c","/frps/frps.toml"]
